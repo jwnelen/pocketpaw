@@ -893,6 +893,19 @@ _PRESETS: list[MCPPreset] = [
         docs_url="https://huggingface.co/docs/hub/en/hf-mcp-server",
         oauth=True,
     ),
+    # ── Task Management ────────────────────────────────────────────────────
+    MCPPreset(
+        id="todoist",
+        name="Todoist",
+        description="Tasks, projects, labels, and productivity management (OAuth)",
+        icon="check-square",
+        category="productivity",
+        package="",
+        transport="http",
+        url="https://ai.todoist.net/mcp",
+        docs_url="https://todoist.com/integrations/apps/mcp",
+        oauth=True,
+    ),
     # ── Google Workspace ─────────────────────────────────────────────
     MCPPreset(
         id="google-workspace",

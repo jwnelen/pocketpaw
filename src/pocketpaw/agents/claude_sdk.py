@@ -382,6 +382,22 @@ class ClaudeSDKBackend:
                 )
         return tools
 
+    @staticmethod
+    def _load_oauth_access_token(server_name: str) -> str | None:
+        """Synchronously read the stored OAuth access token for an MCP server, if any."""
+        try:
+            from pocketpaw.config import get_config_dir
+
+            import json
+
+            path = get_config_dir() / "mcp_oauth" / f"{server_name}.json"
+            if not path.exists():
+                return None
+            data = json.loads(path.read_text())
+            return data.get("tokens", {}).get("access_token")
+        except Exception:
+            return None
+
     def _get_mcp_servers(self) -> dict[str, dict]:
         """Load enabled MCP server configs, filtered by tool policy.
 
@@ -417,8 +433,32 @@ class ClaudeSDKBackend:
                 # Claude SDK expects "http" for both SSE and streamable-http
                 sdk_type = "http" if cfg.transport == "streamable-http" else cfg.transport
                 entry = {"type": sdk_type, "url": cfg.url}
-                if cfg.env:
-                    entry["headers"] = cfg.env
+                headers: dict[str, str] = dict(cfg.env or {})
+                # For OAuth servers: inject the stored access token as an Authorization header
+                # so Claude CLI connects directly without starting its own OAuth callback server.
+                # Claude CLI's OAuth callback binds to 127.0.0.1 which is unreachable from the
+                # host browser when running in Docker. PocketPaw's MCP manager handles initial auth
+                # via the web dashboard (port 8888).
+                if cfg.oauth:
+                    token = self._load_oauth_access_token(cfg.name)
+                    if token:
+                        headers.setdefault("Authorization", f"Bearer {token}")
+                    else:
+                        # No token yet — skip. PocketPaw's manager handles the OAuth dance.
+                        logger.info(
+                            "MCP server '%s' requires OAuth but has no stored token — "
+                            "skipping for Claude CLI until authenticated via web dashboard",
+                            cfg.name,
+                        )
+                        continue
+                else:
+                    # Non-oauth http server: still inject a token if one exists (e.g. the server
+                    # was added manually before the oauth flag was available).
+                    token = self._load_oauth_access_token(cfg.name)
+                    if token:
+                        headers.setdefault("Authorization", f"Bearer {token}")
+                if headers:
+                    entry["headers"] = headers
             else:
                 logger.debug("Skipping MCP '%s' (unknown transport=%s)", cfg.name, cfg.transport)
                 continue

@@ -1,0 +1,22 @@
+[build]
+builder = "dockerfile"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+startCommand = "pocketpaw"
+healthcheckPath = "/"
+healthcheckTimeout = 30
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 3
+
+[[deploy.environmentVariables]]
+name = "POCKETPAW_WEB_HOST"
+value = "0.0.0.0"
+
+[[deploy.environmentVariables]]
+name = "POCKETPAW_WEB_PORT"
+value = "8888"
+
+[[deploy.environmentVariables]]
+name = "POCKETPAW_LOCALHOST_AUTH_BYPASS"
+value = "false"

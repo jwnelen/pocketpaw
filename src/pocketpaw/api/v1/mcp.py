@@ -40,6 +40,7 @@ async def add_mcp_server(request: Request):
         url=data.get("url", ""),
         env=data.get("env", {}),
         enabled=data.get("enabled", True),
+        oauth=data.get("oauth", False),
     )
     if not config.name:
         raise HTTPException(status_code=400, detail="Server name is required")
