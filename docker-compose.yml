@@ -4,6 +4,7 @@ services:
     container_name: pocketpaw
     ports:
       - "${POCKETPAW_PORT:-8888}:8888"
+      - "39725:39725" # Add the OAuth callback port here
     volumes:
       - pocketpaw-data:/home/pocketpaw/.pocketpaw
       # Agent-created files (via Write/Bash tools) — accessible at ./workspace/ on host
@@ -13,8 +14,7 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     env_file:
-      - path: .env
-        required: false
+      - .env
     restart: unless-stopped
 
   # Local LLM — start with: docker compose --profile ollama up -d
