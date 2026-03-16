@@ -115,7 +115,8 @@ window.PocketPaw.MCP = {
                             ? this.mcpForm.args.split(',').map(s => s.trim())
                             : [],
                         url: this.mcpForm.url,
-                        enabled: true
+                        enabled: true,
+                        oauth: !!this.mcpForm.oauth
                     };
                     const res = await fetch('/api/mcp/add', {
                         method: 'POST',
@@ -125,7 +126,7 @@ window.PocketPaw.MCP = {
                     const data = await res.json();
                     if (data.status === 'ok') {
                         this.showToast(`MCP server "${this.mcpForm.name}" added`, 'success');
-                        this.mcpForm = { name: '', transport: 'stdio', command: '', args: '', url: '', fullCommand: '' };
+                        this.mcpForm = { name: '', transport: 'stdio', command: '', args: '', url: '', fullCommand: '', oauth: false };
                         await this.getMCPStatus();
                     } else {
                         this.showToast(data.error || 'Failed to add server', 'error');
