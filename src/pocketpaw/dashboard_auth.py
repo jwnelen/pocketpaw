@@ -194,6 +194,8 @@ async def _auth_dispatch(request: Request) -> Response | None:
         "/api/whatsapp/qr",
         "/api/v1/whatsapp/qr",
         "/oauth/callback",
+        "/api/health",
+        "/api/v1/health",
         "/api/mcp/oauth/callback",
         "/api/v1/mcp/oauth/callback",
         "/api/v1/oauth/authorize",
