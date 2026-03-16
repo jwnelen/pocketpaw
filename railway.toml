@@ -3,6 +3,7 @@ builder = "dockerfile"
 dockerfilePath = "Dockerfile"
 
 [deploy]
+region = "europe-west3"
 startCommand = "pocketpaw"
 healthcheckPath = "/"
 healthcheckTimeout = 30
