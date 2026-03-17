@@ -596,9 +596,11 @@ class ClaudeSDKBackend:
         """
         import time
 
+        mcp_names = sorted((getattr(options, "mcp_servers", None) or {}).keys())
         key = (
             f"{session_key or ''}:"
-            f"{getattr(options, 'model', '')}:{sorted(getattr(options, 'allowed_tools', []) or [])}"
+            f"{getattr(options, 'model', '')}:{sorted(getattr(options, 'allowed_tools', []) or [])}:"
+            f"{mcp_names}"
         )
 
         if self._client is not None and self._client_options_key == key:
