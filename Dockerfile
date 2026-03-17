@@ -90,7 +90,7 @@ ENV POCKETPAW_FILE_JAIL_PATH=/home/pocketpaw/workspace
 
 EXPOSE 8888
 
-HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-    CMD curl -f http://localhost:8888/ || exit 1
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
+    CMD curl -f http://localhost:8888/api/health || exit 1
 
 CMD ["pocketpaw"]
