@@ -3,25 +3,8 @@ builder = "dockerfile"
 dockerfilePath = "Dockerfile"
 
 [deploy]
-region = "europe-west3"
-startCommand = "pocketpaw"
+startCommand = "pocketpaw --port $PORT"
 healthcheckPath = "/api/health"
-healthcheckTimeout = 30
+healthcheckTimeout = 60
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 3
-
-[[deploy.environmentVariables]]
-name = "PORT"
-value = "8888"
-
-[[deploy.environmentVariables]]
-name = "POCKETPAW_WEB_HOST"
-value = "0.0.0.0"
-
-[[deploy.environmentVariables]]
-name = "POCKETPAW_WEB_PORT"
-value = "8888"
-
-[[deploy.environmentVariables]]
-name = "POCKETPAW_LOCALHOST_AUTH_BYPASS"
-value = "false"
