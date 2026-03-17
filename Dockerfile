@@ -75,7 +75,6 @@ RUN groupadd --system pocketpaw && \
     mkdir -p /home/pocketpaw/.pocketpaw /home/pocketpaw/workspace && \
     chown -R pocketpaw:pocketpaw /home/pocketpaw
 
-USER pocketpaw
 WORKDIR /home/pocketpaw
 
 # Bind to 0.0.0.0 so the container port is reachable from the host
@@ -88,9 +87,14 @@ ENV POCKETPAW_LOCALHOST_AUTH_BYPASS=false
 # Agent-created files land here — bind-mount to access them on the host
 ENV POCKETPAW_FILE_JAIL_PATH=/home/pocketpaw/workspace
 
+# Entrypoint runs as root to fix volume ownership, then drops to pocketpaw
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
 EXPOSE 8888
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
     CMD curl -f http://localhost:8888/api/health || exit 1
 
+ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["pocketpaw"]
