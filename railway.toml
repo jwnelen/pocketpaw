@@ -5,22 +5,22 @@ dockerfilePath = "Dockerfile"
 [deploy]
 region = "europe-west3"
 startCommand = "pocketpaw"
-healthcheckPath = "/api/health"
-healthcheckTimeout = 30
+# The path Railway will ping. Ensure this route does NOT require your access token.
+healthcheckPath = "/api/health" 
+# Increased from 30 to 120 to allow Python and the daemon to fully initialize
+healthcheckTimeout = 120 
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 3
 
+# We removed the hardcoded PORT="8888" so Railway can assign a port dynamically.
+# This passes Railway's assigned port directly to your application.
 [[deploy.environmentVariables]]
-name = "PORT"
-value = "8888"
+name = "POCKETPAW_WEB_PORT"
+value = "${PORT}"
 
 [[deploy.environmentVariables]]
 name = "POCKETPAW_WEB_HOST"
 value = "0.0.0.0"
-
-[[deploy.environmentVariables]]
-name = "POCKETPAW_WEB_PORT"
-value = "8888"
 
 [[deploy.environmentVariables]]
 name = "POCKETPAW_LOCALHOST_AUTH_BYPASS"
