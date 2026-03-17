@@ -968,6 +968,12 @@ def get_access_token() -> str:
     Get the current access token.
     If it doesn't exist, generate a new one.
     """
+    import os
+
+    env_token = os.environ.get("POCKETPAW_ACCESS_TOKEN", "").strip()
+    if env_token:
+        return env_token
+
     token_path = get_token_path()
     if token_path.exists():
         token = token_path.read_text().strip()
