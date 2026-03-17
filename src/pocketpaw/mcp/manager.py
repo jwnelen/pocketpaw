@@ -191,14 +191,24 @@ class MCPManager:
         from pocketpaw.config import Settings
         from pocketpaw.mcp.oauth_store import MCPTokenStorage
 
+        import os
+
         settings = Settings.load()
         port = settings.web_port or 8888
+
+        # Use the public domain when running on Railway (or any cloud that sets
+        # RAILWAY_PUBLIC_DOMAIN), otherwise fall back to localhost.
+        railway_domain = os.environ.get("RAILWAY_PUBLIC_DOMAIN", "").strip()
+        if railway_domain:
+            callback_base = f"https://{railway_domain}"
+        else:
+            callback_base = f"http://localhost:{port}"
 
         storage = MCPTokenStorage(config.name)
 
         client_metadata = OAuthClientMetadata(
             client_name="PocketPaw",
-            redirect_uris=[f"http://localhost:{port}/api/mcp/oauth/callback"],
+            redirect_uris=[f"{callback_base}/api/mcp/oauth/callback"],
             token_endpoint_auth_method="none",
             grant_types=["authorization_code", "refresh_token"],
             response_types=["code"],
