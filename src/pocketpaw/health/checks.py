@@ -52,6 +52,19 @@ class HealthCheckResult:
 # =============================================================================
 
 
+def _is_container_env() -> bool:
+    """Return True when running inside a Docker container or Railway service."""
+    import os
+
+    # Railway sets these on every deployment
+    if os.environ.get("RAILWAY_ENVIRONMENT") or os.environ.get("RAILWAY_SERVICE_ID"):
+        return True
+    # Standard Docker indicator
+    if os.path.exists("/.dockerenv"):
+        return True
+    return False
+
+
 def check_config_exists() -> HealthCheckResult:
     """Check that ~/.pocketpaw/config.json exists."""
     from pocketpaw.config import get_config_path
@@ -64,6 +77,15 @@ def check_config_exists() -> HealthCheckResult:
             category="config",
             status="ok",
             message=f"Config file exists at {path}",
+            fix_hint="",
+        )
+    if _is_container_env():
+        return HealthCheckResult(
+            check_id="config_exists",
+            name="Config File",
+            category="config",
+            status="ok",
+            message="No config file — using POCKETPAW_* environment variables (container mode)",
             fix_hint="",
         )
     return HealthCheckResult(
@@ -406,6 +428,15 @@ def check_secrets_encrypted() -> HealthCheckResult:
 
     secrets_path = get_config_dir() / "secrets.enc"
     if not secrets_path.exists():
+        if _is_container_env():
+            return HealthCheckResult(
+                check_id="secrets_encrypted",
+                name="Secrets Encrypted",
+                category="config",
+                status="ok",
+                message="No secrets file — using POCKETPAW_* environment variables (container mode)",
+                fix_hint="",
+            )
         return HealthCheckResult(
             check_id="secrets_encrypted",
             name="Secrets Encrypted",
