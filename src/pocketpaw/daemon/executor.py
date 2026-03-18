@@ -112,8 +112,8 @@ class IntentionExecutor:
             # 3. Invoke agent
             agent = self._get_agent_router()
 
-            async for chunk in agent.run(prepared_prompt):
-                yield chunk
+            async for event in agent.run(prepared_prompt):
+                yield {"type": event.type, "content": event.content, **event.metadata}
 
             # 4. Mark intention as run
             self.intention_store.mark_run(intention_id)
