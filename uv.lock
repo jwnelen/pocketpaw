@@ -3610,7 +3610,11 @@ wheels = [
 
 [[package]]
 name = "pocketpaw"
+<<<<<<< HEAD
 version = "0.4.15"
+=======
+version = "0.4.10"
+>>>>>>> 15fcf50 (fix(daemon): convert AgentEvent to dict in intention executor)
 source = { editable = "." }
 dependencies = [
     { name = "anthropic" },
