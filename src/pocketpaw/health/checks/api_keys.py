@@ -256,6 +256,17 @@ def check_secrets_encrypted() -> HealthCheckResult:
 
     secrets_path = get_config_dir() / "secrets.enc"
     if not secrets_path.exists():
+        from pocketpaw.health.checks.constants import _is_container_env
+
+        if _is_container_env():
+            return HealthCheckResult(
+                check_id="secrets_encrypted",
+                name="Secrets Encrypted",
+                category="config",
+                status="ok",
+                message="No secrets file — using POCKETPAW_* environment variables (container mode)",
+                fix_hint="",
+            )
         return HealthCheckResult(
             check_id="secrets_encrypted",
             name="Secrets Encrypted",

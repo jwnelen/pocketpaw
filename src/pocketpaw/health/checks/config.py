@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 
+from pocketpaw.health.checks.constants import _is_container_env
 from pocketpaw.health.checks.result import HealthCheckResult
 
 
@@ -19,6 +20,15 @@ def check_config_exists() -> HealthCheckResult:
             category="config",
             status="ok",
             message=f"Config file exists at {path}",
+            fix_hint="",
+        )
+    if _is_container_env():
+        return HealthCheckResult(
+            check_id="config_exists",
+            name="Config File",
+            category="config",
+            status="ok",
+            message="No config file — using POCKETPAW_* environment variables (container mode)",
             fix_hint="",
         )
     return HealthCheckResult(
